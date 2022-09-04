@@ -12,6 +12,7 @@ function WriteScreen({route}) {
   const [body, setBody] = useState(log?.body ?? '');
   const {onCreate, onUpdate, onRemove} = useContext(LogContext);
   const navigation = useNavigation();
+  const [date, setDate] = useState(log ? new Date(log.date) : new Date());
 
   const onSave = () => {
     if (log) {
@@ -56,6 +57,8 @@ function WriteScreen({route}) {
           onSave={onSave}
           onAskRemove={onAskRemove}
           isEditing={!!log}
+          date={date}
+          onChangeDate={setDate}
         />
         <WriteEditor
           title={title}

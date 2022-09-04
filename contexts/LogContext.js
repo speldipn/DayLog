@@ -1,33 +1,23 @@
-import React from 'react';
-import {createContext, useState} from 'react';
+import React, {useRef} from 'react';
+import {createContext, useState, useEffect} from 'react';
 import {v4 as uuidv4} from 'uuid';
+import LogsStorage from '../storages/LogsStorage';
 
 const LogContext = createContext();
 
 export function LogContextProvider({children}) {
-  const [logs, setLogs] = useState(
-    Array.from({length: 5}).map((_, index) => ({
-      id: uuidv4(),
-      title: `Log ${index}`,
-      body: `Body ${index}`,
-      date: new Date(
-        Date.now() - 1000 * 60 * 60 * 24 * (Math.random() * 10),
-      ).toISOString(),
-    })),
-  );
-
-  // {
-  //   id: uuidv4(),
-  //   title: 'Log 04',
-  //   body: 'Log 05',
-  //   date: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
-  // },
-  // {
-  //   id: uuidv4(),
-  //   title: 'Log 05',
-  //   body: 'Log 05',
-  //   date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-  // },
+  // const [logs, setLogs] = useState(
+  //   Array.from({length: 5}).map((_, index) => ({
+  //     id: uuidv4(),
+  //     title: `Log ${index}`,
+  //     body: `Body ${index}`,
+  //     date: new Date(
+  //       Date.now() - 1000 * 60 * 60 * 24 * (Math.random() * 10),
+  //     ).toISOString(),
+  //   })),
+  // );
+  const [logs, setLogs] = useState([]);
+  const initialLogsRef = useRef(null);
 
   const onCreate = ({title, body, date}) => {
     const log = {
@@ -49,6 +39,23 @@ export function LogContextProvider({children}) {
     console.log(logs.length, nextLogs.length);
     setLogs(nextLogs);
   };
+
+  useEffect(() => {
+    (async () => {
+      const savedLogs = await LogsStorage.get();
+      if (savedLogs) {
+        initialLogsRef.current = savedLogs;
+        setLogs(savedLogs);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (logs === initialLogsRef.current) {
+      return;
+    }
+    LogsStorage.set(logs);
+  }, [logs]);
 
   return (
     <LogContext.Provider value={{logs, onCreate, onUpdate, onRemove}}>
