@@ -1,5 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {StyleSheet, View, Animated, Button} from 'react-native';
+import CalendarView from '../components/CalendarView';
 
 function SlideLeftAndRight() {
   const animation = useRef(new Animated.Value(0)).current;
@@ -14,31 +15,7 @@ function SlideLeftAndRight() {
 
   return (
     <View style={styles.block}>
-      <Animated.View
-        style={[
-          styles.rectangle,
-          {
-            transform: [
-              {
-                translateX: animation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 150],
-                }),
-              },
-            ],
-            opacity: animation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 0],
-            }),
-          },
-        ]}
-      />
-      <Button
-        title="Toggle"
-        onPress={() => {
-          setEnabled(!enabled);
-        }}
-      />
+      <CalendarView />
     </View>
   );
 }
