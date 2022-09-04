@@ -3,19 +3,20 @@ import {createContext, useState, useEffect} from 'react';
 import {v4 as uuidv4} from 'uuid';
 import LogsStorage from '../storages/LogsStorage';
 
+// const [logs, setLogs] = useState(
+//   Array.from({length: 5}).map((_, index) => ({
+//     id: uuidv4(),
+//     title: `Log ${index}`,
+//     body: `Body ${index}`,
+//     date: new Date(
+//       Date.now() - 1000 * 60 * 60 * 24 * (Math.random() * 10),
+//     ).toISOString(),
+//   })),
+// );
+
 const LogContext = createContext();
 
 export function LogContextProvider({children}) {
-  // const [logs, setLogs] = useState(
-  //   Array.from({length: 5}).map((_, index) => ({
-  //     id: uuidv4(),
-  //     title: `Log ${index}`,
-  //     body: `Body ${index}`,
-  //     date: new Date(
-  //       Date.now() - 1000 * 60 * 60 * 24 * (Math.random() * 10),
-  //     ).toISOString(),
-  //   })),
-  // );
   const [logs, setLogs] = useState([]);
   const initialLogsRef = useRef(null);
 
@@ -36,7 +37,6 @@ export function LogContextProvider({children}) {
 
   const onRemove = log => {
     const nextLogs = logs.filter(item => item.id !== log.id);
-    console.log(logs.length, nextLogs.length);
     setLogs(nextLogs);
   };
 
