@@ -6,11 +6,13 @@ const LogContext = createContext();
 
 export function LogContextProvider({children}) {
   const [logs, setLogs] = useState(
-    Array.from({length: 3}).map((_, index) => ({
+    Array.from({length: 5}).map((_, index) => ({
       id: uuidv4(),
       title: `Log ${index}`,
       body: `Body ${index}`,
-      date: new Date().toISOString(),
+      date: new Date(
+        Date.now() - 1000 * 60 * 60 * 24 * (Math.random() * 10),
+      ).toISOString(),
     })),
   );
 

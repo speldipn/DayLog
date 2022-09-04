@@ -1,9 +1,30 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 
-function CalendarView() {
-  return <Calendar style={styles.calendar} />;
+function CalendarView({markedDates, selectedDate, setSelectedDate}) {
+  const markedSelectedDate = {
+    ...markedDates,
+    [selectedDate]: {
+      selected: true,
+      marked: markedDates[selectedDate]?.marked,
+    },
+  };
+  return (
+    <Calendar
+      style={styles.calendar}
+      markedDates={markedSelectedDate}
+      theme={{
+        selectedDayBackgroundColor: '#009688',
+        arrowColor: '#009688',
+        dotColor: '#009688',
+        todayTextColor: '#ff0000',
+      }}
+      onDayPress={day => {
+        setSelectedDate(day.dateString);
+      }}
+    />
+  );
 }
 
 const styles = StyleSheet.create({

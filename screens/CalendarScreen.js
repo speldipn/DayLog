@@ -1,36 +1,43 @@
-import React, {useRef, useState, useEffect} from 'react';
-import {StyleSheet, View, Animated, Button} from 'react-native';
+import React, {useContext, useState, useMemo} from 'react';
 import CalendarView from '../components/CalendarView';
-
-function SlideLeftAndRight() {
-  const animation = useRef(new Animated.Value(0)).current;
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    Animated.timing(animation, {
-      toValue: enabled ? 1 : 0,
-      useNativeDriver: true,
-    }).start();
-  }, [enabled, animation]);
-
-  return (
-    <View style={styles.block}>
-      <CalendarView />
-    </View>
-  );
-}
+import LogContext from '../contexts/LogContext';
+import {format} from 'date-fns';
+import FeedList from '../components/FeedList';
 
 function CalendarScreen() {
+  const {logs} = useContext(LogContext);
+
+  const markedDates = useMemo(
+    () =>
+      logs.reduce((acc, current) => {
+        const formattedDate = format(new Date(current.date), 'yyyy-MM-dd');
+        acc[formattedDate] = {marked: true};
+        console.log('Process markDates');
+        return acc;
+      }, {}),
+    [logs],
+  );
+
+  const [selectedDate, setSelectedDate] = useState(
+    format(Date.now(), 'yyyy-MM-dd'),
+  );
+
+  const filteredLogs = logs.filter(
+    log => format(new Date(log.date), 'yyyy-MM-dd') === selectedDate,
+  );
+
   return (
-    <View style={styles.block}>
-      <SlideLeftAndRight />
-    </View>
+    <FeedList
+      logs={filteredLogs}
+      ListHeaderComponent={
+        <CalendarView
+          markedDates={markedDates}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+        />
+      }
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  block: {flex: 1},
-  rectangle: {width: 100, height: 100, backgroundColor: 'black'},
-});
 
 export default CalendarScreen;
